@@ -1,0 +1,41 @@
+﻿<h3>DemoComponent</h3>
+
+<p>Valor actual: @Value</p>
+
+<button @onclick="OnButtonClicked">Reset</button>
+
+@code {
+
+	
+	[Parameter]
+	public int Value { get; set; }
+	
+	/*
+	private int _value;
+	[Parameter]
+	public int Value
+	{
+		get
+		{
+			return _value;
+		}
+		set
+		{
+			if (_value != value)
+			{
+				_value = value;
+				OnValueChanged.InvokeAsync(_value);
+			}
+		}
+	}
+	*/
+
+	private async Task OnButtonClicked(MouseEventArgs args)
+	{
+		Value = 0;
+		await OnValueChanged.InvokeAsync(Value);
+	}
+
+	[Parameter]
+	public EventCallback<int> OnValueChanged { get; set; }
+	}

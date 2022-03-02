@@ -1,0 +1,62 @@
+﻿@page "/"
+@using DemoWebBlazorServer.Data
+@inject ITodoService TodoSvc
+
+<PageTitle>Index</PageTitle>
+
+<h1>Hello, world!</h1>
+
+@if (_todos is not null)
+{
+	<ul>
+		@foreach (var task in _todos)
+		{
+			<li>ID: @task.Id - @task.Description</li>
+		}
+	</ul>
+}
+else
+{
+	<p>Loading Tasks...</p>
+}
+
+<button @onclick="OnNewTask">New Task</button>
+
+
+<hr />
+
+<DemoComponent Value="_value" OnValueChanged="OnValueChangedHandler" />
+<br />
+<button @onclick="OnButtonClicked">Increase Value</button>
+
+@code {
+	private int _value = 0;
+	private List<TodoTask> _todos;
+
+	protected async Task OnNewTask(MouseEventArgs args)
+	{
+		var todoTask = new TodoTask()
+			{
+				Description = "Elemento nuevo...",
+				Important = true,
+				DoneWhen = null
+			};
+		_todos.Add(todoTask);
+		await TodoSvc.AddNewTask(todoTask);
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		_todos = (await TodoSvc.GetPendingTodos()).ToList();
+	}
+
+	private void OnButtonClicked(MouseEventArgs args)
+	{
+		_value++;
+	}
+
+	private void OnValueChangedHandler(int value)
+	{
+		_value = value;
+	}
+}
